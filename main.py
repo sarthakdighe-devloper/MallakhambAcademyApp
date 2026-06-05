@@ -17,7 +17,7 @@ import openpyxl
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-# Force desktop scaling for development testing
+# Force mobile dimension rendering for native view testing
 Window.size = (360, 640)
 
 KV = '''
@@ -123,8 +123,8 @@ class AcademyApp(MDApp):
     def toggle_theme(self):
         self.theme_cls.theme_style = "Light" if self.theme_cls.theme_style == "Dark" else "Dark"
 
-    def get_secure_storage_path(self, filename):
-        """Helper to find internal storage space depending on the operating system."""
+    def get_output_directory(self, filename):
+        """Cross-platform path generator ensuring secure mobile execution context."""
         if os.name == 'nt':
             return filename
         try:
@@ -185,7 +185,7 @@ class AcademyApp(MDApp):
         today = datetime.now().strftime("%Y-%m-%d")
         conn = database.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name BAG FROM students")
+        cursor.execute("SELECT id, name FROM students")
         students = cursor.fetchall()
         
         for student in students:
@@ -231,18 +231,18 @@ class AcademyApp(MDApp):
             ws.append(row)
         conn.close()
         
-        target_file = self.get_secure_storage_path("Attendance_Report.xlsx")
-        wb.save(target_file)
-        self.show_alert_dialog("Success", "Excel report saved successfully inside internal storage.")
+        target_path = self.get_output_directory("Attendance_Report.xlsx")
+        wb.save(target_path)
+        self.show_alert_dialog("Success", "Excel report exported safely to app directory storage.")
 
     def export_student_pdf(self):
-        target_file = self.get_secure_storage_path("Academy_Roster_Attendance.pdf")
-        c = canvas.Canvas(target_file, pagesize=letter)
+        target_path = self.get_output_directory("Academy_Roster_Attendance.pdf")
+        c = canvas.Canvas(target_path, pagesize=letter)
         today = datetime.now().strftime("%Y-%m-%d")
         c.setFont("Helvetica-Bold", 18)
         c.drawString(50, 750, "Mallakhamb Academy")
         c.setFont("Helvetica", 12)
-        c.drawString(50, 730, f"Comprehensive Roster & Attendance — Run Date: {today}")
+        c.drawString(50, 730, f"Comprehensive Roster & Attendance Status — Run Date: {today}")
         c.line(50, 715, 550, 715)
         
         conn = database.connect()
@@ -263,7 +263,7 @@ class AcademyApp(MDApp):
             c.drawString(430, y_position, status)
             y_position -= 25
         c.save()
-        self.show_alert_dialog("Success", "PDF report saved successfully inside internal storage.")
+        self.show_alert_dialog("Success", "PDF report exported safely to app directory storage.")
 
     def show_alert_dialog(self, title, text):
         alert = MDDialog(title=title, text=text, buttons=[MDFlatButton(text="OK", on_release=lambda x: alert.dismiss())])
