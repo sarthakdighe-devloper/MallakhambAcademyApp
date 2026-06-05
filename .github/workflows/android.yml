@@ -1,7 +1,7 @@
 name: Build Android APK
 on: [push, pull_request]
 
-# Fixed: Forces the pipeline engine to bypass any Node 20 deprecation warnings
+# Forces the pipeline engine to bypass Node 20 deprecation warnings
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -65,7 +65,7 @@ jobs:
           pkg-config \
           cmake \
           openjdk-17-jdk \
-          libtinfo5 \
+          libtinfo6 \
           automake
 
     - name: Install Python Dependencies
