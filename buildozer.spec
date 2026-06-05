@@ -5,30 +5,25 @@ package.name = mallakhambapp
 package.domain = org.sarthakdighe
 
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,atlas,db,json
+source.include_exts = py,png,jpg,jpeg,kv,atlas,db
 
 version = 1.0
 
-requirements = python3,kivy==2.3.0,pillow
+requirements = python3,kivy,pillow
 
 orientation = portrait
 
 fullscreen = 0
 
-android.api = 34
+android.api = 33
 android.minapi = 21
 android.ndk_api = 21
 
 android.archs = arm64-v8a
 
-android.permissions = INTERNET
-
 android.enable_androidx = True
 
-android.allow_backup = True
-
-source.exclude_dirs = venv,.git,__pycache__,build,bin
-source.exclude_patterns = *.pyc,*.pyo
+android.permissions = INTERNET
 
 [buildozer]
 
