@@ -1,6 +1,10 @@
 name: Build Android APK
 on: [push, pull_request]
 
+# Fixed: Forces the pipeline engine to bypass any Node 20 deprecation warnings
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -64,7 +68,6 @@ jobs:
           libtinfo5 \
           automake
 
-    # Fixed: Sets specific build system versions compatible with Kivy core
     - name: Install Python Dependencies
       run: |
         python -m pip install --upgrade pip
