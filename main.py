@@ -17,6 +17,9 @@ import openpyxl
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
+# Force desktop scaling for development testing
+Window.size = (360, 640)
+
 KV = '''
 MDScreen:
     MDBoxLayout:
@@ -120,6 +123,16 @@ class AcademyApp(MDApp):
     def toggle_theme(self):
         self.theme_cls.theme_style = "Light" if self.theme_cls.theme_style == "Dark" else "Dark"
 
+    def get_secure_storage_path(self, filename):
+        """Helper to find internal storage space depending on the operating system."""
+        if os.name == 'nt':
+            return filename
+        try:
+            from android.storage import app_storage_path
+            return os.path.join(app_storage_path(), filename)
+        except ImportError:
+            return filename
+
     def load_students(self, *args):
         self.root.ids.student_list.clear_widgets()
         conn = database.connect()
@@ -172,11 +185,11 @@ class AcademyApp(MDApp):
         today = datetime.now().strftime("%Y-%m-%d")
         conn = database.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name FROM students")
+        cursor.execute("SELECT id, name BAG FROM students")
         students = cursor.fetchall()
         
         for student in students:
-            student_id, name = student
+            student_id, name = student[0], student[1]
             cursor.execute("SELECT status FROM attendance WHERE student_id = ? AND date = ?", (student_id, today))
             row = cursor.fetchone()
             status = row[0] if row else "Absent"
@@ -218,22 +231,13 @@ class AcademyApp(MDApp):
             ws.append(row)
         conn.close()
         
-        # Save securely to internal storage on mobile devices
-        filename = "Attendance_Report.xlsx"
-        if os.name != 'nt': 
-            from android.storage import app_storage_path
-            filename = os.path.join(app_storage_path(), filename)
-            
-        wb.save(filename)
-        self.show_alert_dialog("Success", f"Excel report saved successfully to storage.")
+        target_file = self.get_secure_storage_path("Attendance_Report.xlsx")
+        wb.save(target_file)
+        self.show_alert_dialog("Success", "Excel report saved successfully inside internal storage.")
 
     def export_student_pdf(self):
-        filename = "Academy_Roster_Attendance.pdf"
-        if os.name != 'nt':
-            from android.storage import app_storage_path
-            filename = os.path.join(app_storage_path(), filename)
-            
-        c = canvas.Canvas(filename, pagesize=letter)
+        target_file = self.get_secure_storage_path("Academy_Roster_Attendance.pdf")
+        c = canvas.Canvas(target_file, pagesize=letter)
         today = datetime.now().strftime("%Y-%m-%d")
         c.setFont("Helvetica-Bold", 18)
         c.drawString(50, 750, "Mallakhamb Academy")
@@ -259,7 +263,7 @@ class AcademyApp(MDApp):
             c.drawString(430, y_position, status)
             y_position -= 25
         c.save()
-        self.show_alert_dialog("Success", "PDF report saved successfully to storage.")
+        self.show_alert_dialog("Success", "PDF report saved successfully inside internal storage.")
 
     def show_alert_dialog(self, title, text):
         alert = MDDialog(title=title, text=text, buttons=[MDFlatButton(text="OK", on_release=lambda x: alert.dismiss())])
