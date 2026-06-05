@@ -1,50 +1,54 @@
 [app]
-# (str) Title of your application
+
+# Application
 title = Mallakhamb Academy
-
-# (str) Package name
 package.name = mallakhambapp
-
-# (str) Package domain (needed for android/ios packaging)
 package.domain = org.sarthakdighe
 
-# (str) Source code where the main.py lives
+# Source
 source.dir = .
+source.include_exts = py,png,jpg,jpeg,kv,atlas,db,json
 
-# (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,db
+# Version
+version = 1.0
 
-# (str) Application versioning
-version = 0.1
-
-# (list) Application requirements
-# comma separated e.g. requirements = sqlite3,kivy
+# Requirements
 requirements = python3,kivy==2.3.0,kivymd==1.1.1,pillow
 
-# (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
+# Orientation
 orientation = portrait
 
-# (int) Target Android API, should be as high as possible.
-android.api = 33
-
-# (int) Minimum API your APK will support.
-android.minapi = 21
-
-# (bool) Indicate if the application should be fullscreen or not
+# Fullscreen
 fullscreen = 0
 
-# (list) Permissions
-android.permissions = READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
+# Android
+android.api = 34
+android.minapi = 21
+android.ndk_api = 21
 
-# (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
-android.archs = arm64-v8a, armeabi-v7a
+# Architectures
+android.archs = arm64-v8a
 
-# (bool) enables Android auto backup feature (Android API >=23)
+# Permissions
+android.permissions = INTERNET
+
+# Backup
 android.allow_backup = True
 
-[buildozer]
-# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
-log_level = 2
+# AndroidX
+android.enable_androidx = True
 
-# (int) Display warning if buildozer is run as root (0 = False, 1 = True)
+# Presplash (optional)
+# presplash.filename = assets/presplash.png
+
+# Icon (optional)
+# icon.filename = assets/icon.png
+
+# Exclude unnecessary files
+source.exclude_dirs = venv,.git,__pycache__,build,bin
+source.exclude_patterns = *.pyc,*.pyo,*.log
+
+[buildozer]
+
+log_level = 2
 warn_on_root = 1
